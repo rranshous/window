@@ -1,4 +1,4 @@
-
+from socket_handlers import SocketHandler
 from requests import RawRequest, RawResponse, ConvertRequest, ConvertResponse
 
 class UDPRawInputServer(object):
@@ -50,70 +50,22 @@ class UDPRawInputServer(object):
 
         # use the details we now have to setup the handler
         handler = RawVideoHandler(self,
-                                  ( raw_response.url, raw_response.port ),
-                                  ( convert_response.url, convert_response.port ))
+                              ( raw_response.url, raw_response.port ),
+                              ( convert_response.url, convert_response.port ))
 
         # and we're done
 
-class TCPOutputHandler(asyncore.dispatcher,Eventable):
-    self.blocksize = 1024
+    def get_free_port(self):
+        # return back an unused udp port
+        pass
 
-    def __init__(self,host_port):
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connect(self.host_port)
-        # todo: use a better data type
-        self.data = ''
+    def handle_udp_close(self,port):
+        # one of the udp ports has been freed
+        pass
 
-    def handle_accept(self):
-        conn, addr = self.accept()
-        self.fire('accept')
-
-    def handle_close(self):
-        self.close()
-        self.fire('close')
-
-    def writable(self):
-        return len(self.data) >= self.blocksize
-
-    def readable(self):
-        return False
-
-    def handle_write(self):
-        self.send(self.data[:self.blocksize])
-        self.data = self.data[self.blocksize:]
-
-    def write(self, data):
-        self.data += data
-
-
-class UDPInputHandler(asyncore.dispatcher,Eventable):
-    blocksize = 1024
-
-    def __init__(self,host_port):
-        # open UPD socket
-        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        # listen on given details
-        self.bind(host_port)
-        self.host_port = host_port
-
-    def handle_accept(self):
-        conn, addr = self.accept()
-        self.fire('accept')
-
-    def handle_close(self):
-        self.close()
-        self.fire('close')
-
-    def writable(self):
-        return False
-
-    def readable(self):
-        return True
-
-    def handle_read(self):
-        data = self.recv(self.blocksize)
-        self.fire('receive',data)
+    def get_url(self):
+        # return back this hosts's url
+        pass
 
 
 class RawVideoHandler():
@@ -124,10 +76,11 @@ class RawVideoHandler():
     def __init__(self,server,udp_host_port,target_host_port):
 
         # setup a handler to read in the udp
-        self.udp_in_handler = UDPInHandler(self.udp_host_port)
+        self.udp_in_handler = SocketHandler(self.udp_host_port, tcp=False)
 
         # setup a handler to write out the tcp
-        self.tcp_out_handler = TCPOutHandler(self.target_host_port)
+        self.tcp_out_handler = SocketHandler(self.target_host_port,
+                                             connect_out=True)
 
         # relay the udp data coming in to the tcp going out
         self.udp_in_handler.on('receive',self.tcp_out_handler.write)
