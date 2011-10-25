@@ -1,15 +1,5 @@
 
-
-RawRequest = namedtuple('RawRequest',['key','type','request','vformat'])
-RawResponse = namedtuple('RawResponse',['key','type','url','port'])
-
-ConvertRequest = namedtuple('ConvertRequest',['key','type','request','vformat'])
-ConvertResponse = namedtuple('ConvertResponse',['key','type','url','port')
-
-raw_request_template = RawRequest(key=None,
-                                  type='request',
-                                  request='udp_row_in',
-                                  vformat=None)
+from requests import RawRequest, RawResponse, ConvertRequest, ConvertResponse
 
 class UDPRawInputServer(object):
     """
@@ -32,7 +22,7 @@ class UDPRawInputServer(object):
 
 
         # put out our request listener on the board
-        self.bb_client.get(raw_request_template, self.handle_request)
+        self.bb_client.get(RawRequest(), self.handle_request)
 
     def handle_request(self,t):
         # we have the request tuple
@@ -44,8 +34,6 @@ class UDPRawInputServer(object):
     def find_converter(self,raw_request):
         # put out a request for a converter
         convert_request = ConvertRequest(key=key(),
-                                         type='request',
-                                         request='tcp_convert_raw',
                                          vformat=raw_request.vformat)
 
         self.bb_client.put(convert_request,
@@ -56,7 +44,6 @@ class UDPRawInputServer(object):
 
         # figure out what our response is going to be
         raw_response = RawResponse(key=raw_request.key,
-                                   type='response',
                                    url=self.get_url(),
                                    port=self.get_free_port())
 
