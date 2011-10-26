@@ -14,6 +14,9 @@ class SocketHandler(asyncore.dispatcher,Eventable):
     def __init__(self, host_port, tcp=True, connect_out=False,
                        receive_callback=None, send_callback=None):
 
+        asyncore.dispatcher.__init__(self)
+        Eventable.__init__(self)
+
         self.host_port = host_port
         self.tcp = tcp
         self.connect_out = connect_out
@@ -27,7 +30,7 @@ class SocketHandler(asyncore.dispatcher,Eventable):
 
     def setup_connection(self):
         # create our socket
-        self.create_socket(socket_types['tcp' if self.tcp else 'udp'])
+        self.create_socket(self.socket_types['tcp' if self.tcp else 'udp'])
 
         # do we want to listen or connect out?
         if self.connect_out:

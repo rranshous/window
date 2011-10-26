@@ -15,14 +15,15 @@ class UDPRawInputServer(object):
 
     def __init__(self,blackboard_host_port):
         # connect to the blackboard
-        self.setup_bb_client(blackboard_host_port)
+        self.blackboard_host_port = blackboard_host_port
+        self.setup_bb_client()
 
-    def setup_bb_client(self,host_port):
-        self.bb_client = BBClient(host_port)
-
+    def setup_bb_client(self):
+        # create the client
+        self.bb_client = BBClient(self.blackboard_host_port)
 
         # put out our request listener on the board
-        self.bb_client.get(RawRequest(), self.handle_request)
+        self.bb_client.get(ConvertRequest(), self.handle_request)
 
     def handle_request(self,t):
         # we have the request tuple
@@ -53,6 +54,9 @@ class UDPRawInputServer(object):
                               ( raw_response.url, raw_response.port ),
                               ( convert_response.url, convert_response.port ))
 
+        # drop in our response
+        self.bb_client.put(raw_response)
+
         # and we're done
 
     def get_free_port(self):
@@ -68,12 +72,15 @@ class UDPRawInputServer(object):
         pass
 
 
-class RawVideoHandler():
+class RawVideoHandler(object):
     """
     relays a udp stream to a tcp stream
     """
 
     def __init__(self,server,udp_host_port,target_host_port):
+
+        self.udp_host_port = udp_host_port
+        self.target_host_port = target_host_port
 
         # setup a handler to read in the udp
         self.udp_in_handler = SocketHandler(self.udp_host_port, tcp=False)
@@ -83,7 +90,7 @@ class RawVideoHandler():
                                              connect_out=True)
 
         # relay the udp data coming in to the tcp going out
-        self.udp_in_handler.on('receive',self.tcp_out_handler.write)
+        self.udp_in_handler.on('receive',self.tcp_out_handler.push)
 
         # when one closes, close the other
         self.tcp_out_handler.on('close',self.udp_in_handler.close)
