@@ -13,17 +13,8 @@ class UDPRawInputServer(object):
       we'll get a url + port, we than open a tcp connection and relay
     """
 
-    def __init__(self,blackboard_host_port):
-        # connect to the blackboard
-        self.blackboard_host_port = blackboard_host_port
-        self.setup_bb_client()
-
-    def setup_bb_client(self):
-        # create the client
-        self.bb_client = BBClient(self.blackboard_host_port)
-
-        # put out our request listener on the board
-        self.bb_client.get(ConvertRequest(), self.handle_request)
+    def __init__(self,config,bb_client):
+        self.bb_client = bb_client
 
     def handle_request(self,t):
         # we have the request tuple
