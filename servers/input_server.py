@@ -18,12 +18,20 @@ class UDPRawInputServer(BaseServer):
     def __init__(self,config,bb_client):
         self.bb_client = bb_client
 
+    def make_work_request(self):
+        # wait for udp input requests
+        request = RawRequest()
+        self.bb_client.read_wait(request, self.handle_request)
+
     def handle_request(self,t):
         # we have the request tuple
         request = RawRequest(t)
 
         # we need to find a converter which can take it
         self.find_converter(request)
+
+        # wait for another work request
+        self.make_work_request()
 
     def find_converter(self,raw_request):
         # put out a request for a converter

@@ -8,7 +8,7 @@ module_names = [ os.path.basename(f)[:-3] for f in
                  glob.glob(os.path.dirname(__file__)+"/*.py") ]
 
 # import the modules
-modules = [__import__('servers.%s'%m) for m in module_names]
+modules = [__import__(m) for m in module_names]
 
 # find the server objects
 server_classes = []

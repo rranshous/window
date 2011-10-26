@@ -1,6 +1,7 @@
 import sys, os.path
 import lib.loopable as loopable
 import asyncore
+import servers
 
 # this guy manages the servers
 class Head(object):
@@ -36,34 +37,16 @@ class Head(object):
         """ starting is initializing """
 
         # go through the servers, starting them
-        for cls in self.find_servers():
-
+        # go through each attr on servers module
+        for attr in dir(servers):
+            cls_name = attr
             # check and see if it's one which is active
-            server_config = self.config.get(cls.__name__)
+            server_config = self.config.get(cls_name)
             if server_config and server_config.get('active') == 'True':
+                cls = getattr(servers,cls_name)
                 # passes the test, start'r up
                 server_instance = cls(server_config,self.bb_client)
                 self.servers.append(server_instance)
-
-    def find_servers(self):
-        """ finds server objs in the servers dir """
-
-        # find the modules in the servers dir
-        module_names = [ os.path.basename(f)[:-3] for f in
-                         glob.glob(os.path.dirname(__file__)+"/servers/*.py") ]
-
-        # import the modules
-        modules = [__import__('servers.%s'%m) for m in module_names]
-
-        # find the server objects
-        server_classes = []
-        for module in modules:
-            for attr in dir(module):
-                o = getattr(module,attr)
-                if issubclass(o,BaseServer):
-                    server_classes.append(o)
-
-        return server_classes
 
     def stop_servers(self):
         for server in self.servers:

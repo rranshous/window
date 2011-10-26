@@ -68,7 +68,7 @@ def Response(name,*extra_fields,**defaults):
     return dnamedtuple(name,response_fields+extra_fields,**defaults)
 
 # create our response / request named tuples
-RawRequest = Request('RawRequest','udp_row_in','vformat')
+RawRequest = Request('RawRequest','udp_raw_in','vformat')
 RawResponse = Response('RawResponse')
 
 ConvertRequest = Request('ConvertRequest','tcp_convert_row','vformat')

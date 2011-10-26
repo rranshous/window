@@ -13,6 +13,10 @@ class ConvertServer(BaseServer):
     def __init__(self,config,bb_client):
         self.bb_client = bb_client
 
+    def make_work_request(self):
+        request = ConvertRequest()
+        self.bb_client.read_wait(request, self.handle_request)
+
     def handle_request(self, t):
         # it should be a convert request
         request = ConvertRequest(t)
