@@ -2,8 +2,9 @@ from lib.socket_handlers import SocketHandler
 from lib.requests import RawRequest, RawResponse, \
                          ConvertRequest, ConvertResponse
 from lib.loopable import Loopable
+from base_server import BaseServer
 
-class ConvertServer(object):
+class ConvertServer(BaseServer):
     """
     waits for requests for convert servers
     passes converted stream to storage server

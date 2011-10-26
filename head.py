@@ -1,9 +1,6 @@
 import sys, os.path
-import servers
 import lib.loopable as loopable
 import asyncore
-
-
 
 # this guy manages the servers
 class Head(object):
@@ -19,7 +16,7 @@ class Head(object):
 
     def loop(self,count=None):
         if count:
-            for i in xrange(count)
+            for i in xrange(count):
                 self._loop()
         else:
             while True:
@@ -53,7 +50,7 @@ class Head(object):
 
         # find the modules in the servers dir
         module_names = [ os.path.basename(f)[:-3] for f in
-                         glob.glob(os.path.dirname(__file__)+"/*.py") ]
+                         glob.glob(os.path.dirname(__file__)+"/servers/*.py") ]
 
         # import the modules
         modules = [__import__('servers.%s'%m) for m in module_names]

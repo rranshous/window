@@ -1,8 +1,9 @@
 from lib.socket_handlers import SocketHandler
 from lib.requests import RawRequest, RawResponse, \
                            ConvertRequest, ConvertResponse
+from base_server import BaseServer
 
-class UDPRawInputServer(object):
+class UDPRawInputServer(BaseServer):
     """
     Server connects to to blackboard listening for requests:
       (key,'request','upd_raw_in', video_format)

@@ -1,0 +1,3 @@
+
+class BaseServer(object):
+    pass
