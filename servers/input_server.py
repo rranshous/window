@@ -1,6 +1,6 @@
 from lib.socket_handlers import SocketHandler
 from lib.requests import RawRequest, RawResponse, \
-                         ConvertRequest, ConvertResponse
+                           ConvertRequest, ConvertResponse
 
 class UDPRawInputServer(object):
     """
