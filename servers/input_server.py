@@ -24,14 +24,14 @@ class UDPRawInputServer(BaseServer):
         self.bb_client.read_wait(request, self.handle_request)
 
     def handle_request(self,t):
+        # respect ur rents
+        super(UDPRawInputServer,self).handle_request(t)
+
         # we have the request tuple
         request = RawRequest(t)
 
         # we need to find a converter which can take it
         self.find_converter(request)
-
-        # wait for another work request
-        self.make_work_request()
 
     def find_converter(self,raw_request):
         # put out a request for a converter

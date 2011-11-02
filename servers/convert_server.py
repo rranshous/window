@@ -18,14 +18,15 @@ class ConvertServer(BaseServer):
         self.bb_client.read_wait(request, self.handle_request)
 
     def handle_request(self, t):
+        # while under my roof
+        super(ConvertServer,self).handle_request(t)
+
         # it should be a convert request
         request = ConvertRequest(t)
 
         # now that we have a request for conversion we need to find storage
         self.find_storage(request)
 
-        # wait for another work request
-        self.make_work_request()
 
     def find_storage(self, convert_request):
         # put out a request for storage
