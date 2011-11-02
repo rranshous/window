@@ -1,5 +1,5 @@
 from lib.socket_handlers import SocketHandler
-from lib.requests import StoreRequest, StoreRequest
+from lib.requests import StoreRequest, StoreResponse
 from lib.loopable import Loopable
 from base_server import BaseServer
 
@@ -63,9 +63,13 @@ class StoreHandler(object):
         self.save_fh = None
         self.host_port = host_port
         self.stream_id = stream_id
+        self.server = server
 
         # figure out where we are saving this stream
         self.setup_save_point()
+
+        # setup the file handler to write to
+        self.setup_file_handler()
 
         # setup a stream handler for the data coming in
         self.in_handler = SocketHandler(self.host_port)
@@ -91,8 +95,6 @@ class StoreHandler(object):
         save_root = self.server.config.get('stream_save_root')
         out_path = os.path.join(save_root,r_path)
 
-        # setup the file handler
-        self.setup_file_handler()
 
         # keep it around
         self.save_path = out_path
