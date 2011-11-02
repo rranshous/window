@@ -24,6 +24,9 @@ class ConvertServer(BaseServer):
         # now that we have a request for conversion we need to find storage
         self.find_storage(request)
 
+        # wait for another work request
+        self.make_work_request()
+
     def find_storage(self, convert_request):
         # put out a request for storage
         storage_request = StorageRequest(key=key())
